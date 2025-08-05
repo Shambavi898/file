@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="theme-color" content="#6ec6ff">
+    <title>Personal Assistant | Welcome</title>
+    
+    <!-- Local fallback for Font Awesome -->
+    <style>
+        .fa-robot:before {
+            content: "🤖";
+            font-style: normal;
+        }
+    </style>
+    <link rel="stylesheet" href="/assets/css/font-awesome.min.css" onerror="this.onerror=null;this.disabled=true;">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/assets/images/background.jpg" as="image">
+    <link rel="preload" href="/assets/fonts/Poppins.woff2" as="font" type="font/woff2" crossorigin>
+    
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+            --accent-color: #6ec6ff;
+            --text-color: #000;
+            --loading-gradient: linear-gradient(90deg, #6ec6ff, #4ecdc4);
+            --transition-speed: 0.3s;
+            --min-touch-size: 48px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            min-height: 100vh;
+            overflow: hidden;
+            background: #fff;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            position: relative;
+            background-image: url('/assets/images/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: #f0f0f0; /* Fallback */
+            touch-action: manipulation;
+        }
+
+        /* Glass morphism container with fallback */
+        .glass-panel {
+            background: var(--glass-bg);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            padding: 2rem;
+            width: 95vw;
+            max-width: min(95vw, 800px);
+            z-index: 10;
+            opacity: 0;
+            animation: fadeIn 1.5s ease-in forwards;
+            animation-delay: 1s;
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        @supports (backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px)) {
+            .glass-panel {
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+            }
+        }
+
+        .logo {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .logo i {
+            font-size: 3.5rem;
+            color: var(--accent-color);
+            margin-bottom: 0.75rem;
+            animation: pulse 2s infinite;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        h1 {
+            font-size: clamp(1.8rem, 8vw, 3.5rem);
+            margin-bottom: 1rem;
+            font-weight: 700;
+            color: var(--text-color);
+            text-shadow: none;
+        }
+
+        .welcome-text {
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            margin-bottom: 2.5rem;
+            line-height: 1.5;
+            max-width: 100%;
+            margin: 0 auto 2.5rem;
+        }
+
+        .loading-container {
+            margin: 2rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .loading-bar {
+            width: min(90vw, 300px);
+            height: 6px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.75rem;
+        }
+
+        .loading-progress {
+            height: 100%;
+            width: 0%;
+            background: var(--loading-gradient);
+            border-radius: 4px;
+            animation: loading 4s ease-in-out forwards;
+            animation-delay: 1.5s;
+        }
+
+        .redirect-text {
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            opacity: 0.8;
+            letter-spacing: 0.5px;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 1rem;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            color: var(--text-color);
+            text-shadow: 0 1px 3px rgba(255,255,255,0.5);
+        }
+
+        .skip-button {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            min-width: var(--min-touch-size);
+            min-height: var(--min-touch-size);
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all var(--transition-speed) ease;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .skip-button:hover, .skip-button:focus {
+            background: #5ab0e0;
+            transform: scale(1.05);
+        }
+
+        /* Animation keyframes */
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes loading {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes netflixZoom {
+            0% { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 20px rgba(110, 198, 255, 0.8)); }
+            50% { transform: scale(5); opacity: 1; filter: drop-shadow(0 0 40px rgba(110, 198, 255, 1)); }
+            100% { transform: scale(15); opacity: 0; filter: drop-shadow(0 0 80px rgba(110, 198, 255, 1)); }
+        }
+
+        /* Exit animation */
+        .exit-animation .glass-panel,
+        .exit-animation .footer {
+            opacity: 0;
+            transition: opacity var(--transition-speed) ease;
+        }
+
+        .exit-animation .logo i {
+            animation: netflixZoom 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        /* Error state */
+        .error-state {
+            display: none;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* Mobile landscape */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .glass-panel {
+                padding: 1rem;
+                max-width: 95vw;
+            }
+            
+            h1 {
+                font-size: clamp(1.5rem, 5vw, 2rem);
+            }
+            
+            .welcome-text {
+                margin-bottom: 1rem;
+                font-size: 1rem;
+            }
+            
+            .logo i {
+                font-size: 2.5rem;
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <noscript>
+        <div class="error-state">
+            <h1>JavaScript Required</h1>
+            <p>This application requires JavaScript to function properly. Please enable JavaScript in your browser settings.</p>
+            <button onclick="window.location.href='index.html'">Continue to Basic Version</button>
+        </div>
+    </noscript>
+
+    <button class="skip-button" aria-label="Skip introduction">Skip Intro</button>
+    
+    <div class="glass-panel">
+        <div class="logo">
+            <i class="fas fa-robot" aria-hidden="true"></i>
+        </div>
+        <h1>PERSONAL ASSISTANT</h1>
+        <p class="welcome-text">Your Intelligent Personal Assistant</p>
+        
+        <div class="loading-container">
+            <div class="loading-bar">
+                <div class="loading-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <p class="redirect-text">Initializing your personal assistant experience...</p>
+        </div>
+    </div>
+    
+    <div class="footer">
+        
+    </div>
+    
+    <script>
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.warn('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Performance metrics
+            const startTime = performance.now();
+            
+            // Check for critical errors first
+            if (!('localStorage' in window)) {
+                showError("Your browser doesn't support required features. Please update your browser.");
+                return;
+            }
+
+            let exitAnimationStarted = false;
+            let redirectTimeout;
+            const skipButton = document.querySelector('.skip-button');
+
+            const showError = (message) => {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-state';
+                errorDiv.style.display = 'block';
+                errorDiv.innerHTML = `
+                    <h1>Error</h1>
+                    <p>${message}</p>
+                    <button onclick="window.location.href='index.html'">Continue to Basic Version</button>
+                `;
+                document.body.appendChild(errorDiv);
+                document.querySelector('.glass-panel').style.display = 'none';
+                
+                // Log error to analytics if available
+                if (window.logError) {
+                    window.logError('IntroPageError', message);
+                }
+            };
+
+            const startExitAnimation = () => {
+                if (exitAnimationStarted) return;
+                exitAnimationStarted = true;
+                
+                // Record performance metric
+                const loadTime = performance.now() - startTime;
+                if (window.trackPerformance) {
+                    window.trackPerformance('intro_load_time', loadTime);
+                }
+
+                document.body.classList.add('exit-animation');
+                
+                setTimeout(() => {
+                    try {
+                        // Initialize user session with unique ID
+                        const userId = 'user_' + Math.random().toString(36).substr(2, 9);
+                        localStorage.setItem('userId', userId);
+                        localStorage.setItem('unlockTime', Date.now() + 86400000); // 24 hours
+                        
+                        // Preload main page resources
+                        preloadMainPage();
+                        
+                        window.location.href = "index.html";
+                    } catch (e) {
+                        showError("Failed to initialize local storage. Please check your browser settings.");
+                    }
+                }, 1500);
+            };
+
+            const preloadMainPage = () => {
+                // Create hidden iframe to preload main page
+                const preloader = document.createElement('iframe');
+                preloader.style.display = 'none';
+                preloader.src = 'index.html';
+                document.body.appendChild(preloader);
+            };
+
+            const setupRedirect = () => {
+                redirectTimeout = setTimeout(() => {
+                    startExitAnimation();
+                }, 6000);
+            };
+
+            const handleKeyPress = (e) => {
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                    cleanupEventListeners();
+                    startExitAnimation();
+                }
+            };
+
+            const handleClick = (e) => {
+                if (e.target !== skipButton) {
+                    cleanupEventListeners();
+                    startExitAnimation();
+                }
+            };
+
+            const cleanupEventListeners = () => {
+                document.removeEventListener('keydown', handleKeyPress);
+                document.removeEventListener('click', handleClick);
+                clearTimeout(redirectTimeout);
+            };
+
+            // Event listeners
+            skipButton.addEventListener('click', () => {
+                cleanupEventListeners();
+                startExitAnimation();
+            });
+
+            document.addEventListener('keydown', handleKeyPress);
+            document.addEventListener('click', handleClick);
+            
+            // Check if assets loaded properly
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    if (!document.fonts || !document.fonts.check('1rem system-ui')) {
+                        console.warn('Font loading issue detected');
+                    }
+                    
+                    // Check if critical image loaded
+                    const bgImg = document.querySelector('body');
+                    if (!bgImg.complete || bgImg.naturalWidth === 0) {
+                        console.warn('Background image failed to load');
+                        bgImg.style.backgroundColor = '#f0f0f0';
+                    }
+                }, 1000);
+            }, { once: true });
+
+            // Initialize
+            try {
+                setupRedirect();
+                
+                // Initialize IndexedDB for future use
+                if ('indexedDB' in window) {
+                    initializeDB().catch(err => {
+                        console.warn('IndexedDB initialization failed:', err);
+                    });
+                }
+            } catch (e) {
+                showError("An error occurred during initialization.");
+                console.error(e);
+            }
+        });
+
+        async function initializeDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('UserDataStore', 1);
+                
+                request.onerror = (event) => {
+                    reject('IndexedDB error: ' + event.target.errorCode);
+                };
+                
+                request.onsuccess = (event) => {
+                    resolve(event.target.result);
+                };
+                
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains('userSettings')) {
+                        db.createObjectStore('userSettings', { keyPath: 'id' });
+                    }
+                    if (!db.objectStoreNames.contains('userData')) {
+                        db.createObjectStore('userData', { keyPath: 'id' });
+                    }
+                };
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+// ProductivitySuite/tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "moduleResolution": "node",
+    "strict": true,
+    "jsx": "preserve",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["src/components/*"],
+      "@services/*": ["src/services/*"],
+      "@utils/*": ["src/utils/*"],
+      "@assets/*": ["assets/*"],
+      "@styles/*": ["styles/*"]
+    },
+    "types": ["vitest/globals", "jest"],
+    "noEmit": true,
+    "incremental": true,
+    "composite": true
+  },
+  "include": [
+    "src/**/*",
+    "tests/**/*",
+    "scripts/**/*",
+    "config/**/*",
+    "service-worker.js",
+    "vite.config.ts",
+    "jest.config.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "public",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/__mocks__/**"
+  ],
+  "references": [
+    { "path": "./config/server-config.js" },
+    { "path": "./config/cache-config.js" }
+  ]
+}

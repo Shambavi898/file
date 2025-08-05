@@ -1,0 +1,68 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# Top-most editor config file
+root = true
+
+# Apply to all files
+[*]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# Markdown files
+[*.md]
+trim_trailing_whitespace = false
+max_line_length = 80
+
+# JavaScript/TypeScript files
+[*.{js,jsx,ts,tsx}]
+quote_type = single
+indent_size = 2
+
+# HTML files
+[*.html]
+indent_size = 4
+
+# CSS/SCSS/LESS files
+[*.{css,scss,less}]
+indent_size = 2
+
+# JSON files
+[*.json]
+indent_size = 2
+
+# YAML files
+[*.{yml,yaml}]
+indent_size = 2
+
+# Shell scripts
+[*.sh]
+indent_size = 2
+shell = bash
+
+# Java files (for Android compatibility)
+[*.java]
+indent_size = 4
+
+# XML files (for Android)
+[*.xml]
+indent_size = 4
+
+# Makefiles
+[Makefile]
+indent_style = tab
+
+# Dockerfiles
+[Dockerfile]
+indent_size = 4
+
+# Git ignore files
+[.gitignore]
+indent_size = 2
+
+# Editor config files
+[.editorconfig]
+indent_size = 2

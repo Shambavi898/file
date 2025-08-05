@@ -1,0 +1,102 @@
+{
+  "name": "Productivity Suite",
+  "short_name": "Productive",
+  "description": "All-in-one offline planner, notes, budget & to-do app with cross-device sync",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#1a73e8",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/screenshots/phone-portrait.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Notes interface"
+    },
+    {
+      "src": "assets/screenshots/phone-landscape.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Budget tracker"
+    },
+    {
+      "src": "assets/screenshots/tablet-portrait.png",
+      "sizes": "1200x1920",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Dashboard view"
+    },
+    {
+      "src": "assets/screenshots/tablet-landscape.png",
+      "sizes": "1920x1200",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Task management"
+    }
+  ],
+  "features": [
+    "Offline functionality",
+    "Cross-device sync",
+    "Encrypted data storage",
+    "Dark mode",
+    "Customizable templates",
+    "Data export/import"
+  ],
+  "categories": [
+    "productivity",
+    "business",
+    "finance",
+    "tools"
+  ],
+  "shortcuts": [
+    {
+      "name": "New Note",
+      "url": "/notes?create",
+      "icons": [
+        {
+          "src": "assets/icons/note.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Budget Tracker",
+      "url": "/budget",
+      "icons": [
+        {
+          "src": "assets/icons/budget.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Today's Tasks",
+      "url": "/tasks?view=today",
+      "icons": [
+        {
+          "src": "assets/icons/tasks.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}

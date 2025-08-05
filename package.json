@@ -1,0 +1,39 @@
+{
+  "name": "productivity-suite-pwa",
+  "version": "1.0.0",
+  "description": "Offline-first productivity suite with PWA capabilities",
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.2",
+    "@capacitor/cli": "^7.4.2",
+    "@capacitor/core": "^7.4.2",
+    "localforage": "^1.10.0",
+    "workbox-core": "^6.6.0",
+    "workbox-routing": "^6.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "@types/rollup-plugin-visualizer": "^4.2.4",
+    "@vitejs/plugin-react": "^4.7.0",
+    "rollup-plugin-visualizer": "^6.0.3",
+    "vite": "^7.0.6",
+    "vite-plugin-pwa": "^1.0.2",
+    "vite-plugin-static-copy": "^3.1.1"
+  },
+  "browserslist": [
+    "last 2 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 Safari versions",
+    "last 2 Edge versions"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

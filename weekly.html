@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Progressive Web App Manifest -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Theme color for address bar (Android) -->
+    <meta name="theme-color" content="#0a0e17">
+
+    <!-- Responsive design support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- PWA compatibility -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <!-- Google Ads IMA SDK -->
+    <script async src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0e17">
+    <title>Flat Daily Planner</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg-color: #0a0e17;
+            --bg-gradient: linear-gradient(135deg, #0a0e17 0%, #1a1f2e 100%);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-highlight: rgba(255, 255, 255, 0.2);
+            --text-dark: #ffffff;
+            --text-light: rgba(255, 255, 255, 0.8);
+            --accent-blue: #4dabff;
+            --accent-blue-dark: #2a6bc4;
+            --accent-red: #ff6b6b;
+            --accent-green: #6bff9e;
+            --accent-yellow: #ffde6b;
+            --accent-purple: #c26bff;
+            --shadow-sm: 0 1px 20px rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 4px 30px rgba(0, 0, 0, 0.5);
+            --neon-glow-blue: 0 0 20px rgba(77, 171, 255, 0.5);
+            --neon-glow-red: 0 0 20px rgba(255, 107, 107, 0.5);
+            --neon-glow-green: 0 0 20px rgba(107, 255, 158, 0.5);
+            --neon-glow-yellow: 0 0 20px rgba(255, 222, 107, 0.5);
+            --neon-glow-purple: 0 0 20px rgba(194, 107, 255, 0.5);
+            --transition-all: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            --glass-blur: 24px;
+            --glass-reflect: linear-gradient(
+                135deg, 
+                rgba(255,255,255,0.1) 0%, 
+                rgba(255,255,255,0) 50%, 
+                rgba(255,255,255,0.1) 100%
+            );
+            --glass-edge: 1px solid rgba(255, 255, 255, 0.1);
+            --glass-edge-highlight: 1px solid rgba(255, 255, 255, 0.2);
+            --glass-inset-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+            --glass-outer-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --ambient-light-blue: rgba(77, 171, 255, 0.03);
+            --ambient-light-purple: rgba(194, 107, 255, 0.03);
+        }
+
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            padding: 16px;
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            touch-action: manipulation;
+            -webkit-text-size-adjust: 100%;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            right: -50%;
+            bottom: -50%;
+            background: 
+                radial-gradient(circle at 70% 30%, rgba(77, 171, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 30% 70%, rgba(194, 107, 255, 0.1) 0%, transparent 50%),
+                linear-gradient(135deg, rgba(0,10,20,0.8) 0%, transparent 100%);
+            z-index: -2;
+            animation: ambientMove 20s infinite alternate;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 80% 20%, var(--ambient-light-blue) 0%, transparent 30%),
+                radial-gradient(circle at 20% 80%, var(--ambient-light-purple) 0%, transparent 30%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes ambientMove {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(5%, 5%); }
+            100% { transform: translate(-5%, -5%); }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 0 8px;
+            position: relative;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            position: relative;
+            width: 100%;
+            flex-wrap: wrap;
+            gap: 12px;
+            z-index: 1;
+        }
+
+        .app-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            width: 100%;
+            text-align: center;
+            letter-spacing: -0.5px;
+            position: relative;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(77, 171, 255, 0.3);
+            padding: 8px 0;
+        }
+
+        .app-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            width: 50%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+            opacity: 0.5;
+        }
+
+        .date-display {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-light);
+            text-align: center;
+            padding: 12px 16px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border-radius: 16px;
+            border: var(--glass-edge);
+            box-shadow: var(--glass-outer-shadow), var(--glass-inset-shadow);
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition-all);
+            z-index: 1;
+        }
+
+        .date-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--glass-reflect);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .date-display::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to bottom right, 
+                          rgba(255, 255, 255, 0) 0%, 
+                          rgba(255, 255, 255, 0.15) 50%, 
+                          rgba(255, 255, 255, 0) 100%);
+            transform: rotate(30deg);
+            transition: var(--transition-all);
+            opacity: 0;
+        }
+
+        .date-display:hover {
+            border: var(--glass-edge-highlight);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), var(--glass-inset-shadow);
+        }
+
+        .date-display:hover::after {
+            opacity: 0.6;
+            animation: shine 1.5s;
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(30deg) translate(-50%, -50%); }
+            100% { transform: rotate(30deg) translate(50%, 50%); }
+        }
+
+        .exit-btn {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: var(--glass-edge);
+            border-radius: 16px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition-all);
+            box-shadow: var(--glass-outer-shadow), var(--glass-inset-shadow);
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .exit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--glass-reflect);
+            opacity: 0;
+            transition: var(--transition-all);
+        }
+
+        .exit-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), 
+                        var(--glass-inset-shadow),
+                        0 0 15px rgba(255, 255, 255, 0.1);
+            border: var(--glass-edge-highlight);
+        }
+
+        .exit-btn:hover::before {
+            opacity: 0.3;
+        }
+
+        .exit-btn:active {
+            transform: translateY(0) scale(1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), 
+                       var(--glass-inset-shadow);
+        }
+
+        .planner-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+            width: 100%;
+        }
+
+        .planner-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border-radius: 20px;
+            border: var(--glass-edge);
+            padding: 20px;
+            box-shadow: var(--glass-outer-shadow), 
+                       var(--glass-inset-shadow),
+                       0 0 0 1px rgba(255, 255, 255, 0.05);
+            transition: var(--transition-all);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            z-index: 1;
+        }
+
+        .planner-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--glass-reflect);
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .planner-section::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.05) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(30deg);
+            opacity: 0;
+            transition: var(--transition-all);
+            z-index: -1;
+        }
+
+        .planner-section:hover {
+            transform: translateY(-5px) scale(1.005);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 
+                        var(--glass-inset-shadow),
+                        0 0 30px rgba(255, 255, 255, 0.1);
+            border: var(--glass-edge-highlight);
+        }
+
+        .planner-section:hover::after {
+            opacity: 0.3;
+            animation: shine 2s infinite;
+        }
+
+        .planner-section:active {
+            transform: translateY(0) scale(1);
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: currentColor;
+            opacity: 0.5;
+        }
+
+        .section-title i {
+            margin-right: 12px;
+            font-size: 1.1rem;
+            text-shadow: 0 0 10px currentColor;
+            filter: drop-shadow(0 0 5px currentColor);
+        }
+
+        .section-title i.fa-star { color: var(--accent-yellow); }
+        .section-title i.fa-check-circle { color: var(--accent-green); }
+        .section-title i.fa-shopping-cart { color: var(--accent-blue); }
+        .section-title i.fa-calendar-plus { color: var(--accent-purple); }
+        .section-title i.fa-sticky-note { color: var(--accent-red); }
+
+        .items-container {
+            min-height: 150px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 8px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+            margin-bottom: 16px;
+        }
+
+        .items-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .items-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .items-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .item {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            animation: fadeIn 0.4s ease;
+            transition: var(--transition-all);
+            border: var(--glass-edge);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--glass-outer-shadow);
+        }
+
+        .item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--glass-reflect);
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .item:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+            border: var(--glass-edge-highlight);
+        }
+
+        .item:hover::before {
+            opacity: 0.2;
+        }
+
+        .item-content {
+            flex-grow: 1;
+            padding: 0 12px;
+            word-break: break-word;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            text-shadow: 0 0 1px rgba(0, 0, 0, 0.2);
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: var(--glass-edge);
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-all);
+            color: var(--text-dark);
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--glass-outer-shadow);
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--glass-reflect);
+            opacity: 0;
+            transition: var(--transition-all);
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            border: var(--glass-edge-highlight);
+        }
+
+        .action-btn:hover::before {
+            opacity: 0.2;
+        }
+
+        .action-btn:active {
+            transform: translateY(0) scale(1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .add-form {
+            display: flex;
+            margin-top: 16px;
+            gap: 12px;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .add-input {
+            flex-grow: 1;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: var(--glass-edge);
+            border-radius: 14px;
+            padding: 16px;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+            outline: none;
+            transition: var(--transition-all);
+            width: 100%;
+            box-shadow: var(--glass-outer-shadow);
+        }
+
+        .add-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .add-input:focus {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(77, 171, 255, 0.3),
+                        0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-blue-dark) 100%);
+            border: none;
+            border-radius: 14px;
+            padding: 16px;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-all);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(77, 171, 255, 0.3),
+                       var(--glass-inset-shadow);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        .add-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--accent-blue) 0%, #1e5fb3 100%);
+            opacity: 0;
+            transition: var(--transition-all);
+            z-index: -1;
+        }
+
+        .add-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--glass-reflect);
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(77, 171, 255, 0.5),
+                       var(--glass-inset-shadow);
+        }
+
+        .add-btn:hover::before {
+            opacity: 1;
+        }
+
+        .add-btn:active {
+            transform: translateY(0) scale(1);
+            box-shadow: 0 8px 25px rgba(77, 171, 255, 0.4),
+                       var(--glass-inset-shadow);
+        }
+
+        .priority-high {
+            border-left: 4px solid var(--accent-red);
+            box-shadow: var(--neon-glow-red),
+                        var(--glass-inset-shadow);
+        }
+
+        .priority-medium {
+            border-left: 4px solid var(--accent-yellow);
+            box-shadow: var(--neon-glow-yellow),
+                        var(--glass-inset-shadow);
+        }
+
+        .priority-low {
+            border-left: 4px solid var(--accent-green);
+            box-shadow: var(--neon-glow-green),
+                        var(--glass-inset-shadow);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 24px 0;
+            color: var(--text-light);
+            font-style: italic;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .checklist-checkbox {
+            margin-right: 12px;
+            width: 22px;
+            height: 22px;
+            appearance: none;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition-all);
+            box-shadow: var(--glass-inset-shadow);
+        }
+
+        .checklist-checkbox:checked {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .checklist-checkbox:checked::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 0.8rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .checklist-checkbox:hover {
+            transform: scale(1.1);
+        }
+
+        .editable-content {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-dark);
+            font-size: inherit;
+            padding: 0;
+            margin: 0;
+            outline: none;
+            resize: none;
+            overflow: hidden;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Enhanced Toast styles */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 16px;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            z-index: 1000;
+            max-width: 90%;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 500;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            pointer-events: none;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-10px);
+        }
+        
+        .toast-success {
+            background: rgba(20, 30, 20, 0.7);
+            border: 1px solid rgba(107, 255, 158, 0.3);
+            box-shadow: 0 8px 30px rgba(107, 255, 158, 0.2);
+            color: var(--accent-green);
+        }
+        
+        .toast-error {
+            background: rgba(30, 20, 20, 0.7);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            box-shadow: 0 8px 30px rgba(255, 107, 107, 0.2);
+            color: var(--accent-red);
+        }
+        
+        .toast-warning {
+            background: rgba(30, 25, 15, 0.7);
+            border: 1px solid rgba(255, 222, 107, 0.3);
+            box-shadow: 0 8px 30px rgba(255, 222, 107, 0.2);
+            color: var(--accent-yellow);
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 768px) {
+            .planner-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .container {
+                padding: 0 16px;
+            }
+
+            .app-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .planner-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
+
+            .planner-section {
+                padding: 24px;
+            }
+        }
+
+        /* Floating particles for cinematic effect */
+        .particle {
+            position: fixed;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+            animation: float linear infinite;
+            filter: blur(1px);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Holographic effect for glass panels */
+        .holographic-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(255,255,255,0.03) 0%,
+                rgba(255,255,255,0) 20%,
+                rgba(255,255,255,0.03) 40%,
+                rgba(255,255,255,0) 60%,
+                rgba(255,255,255,0.03) 80%,
+                rgba(255,255,255,0) 100%
+            );
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* 3D Button Effects */
+        .btn-3d {
+            position: relative;
+            transform-style: preserve-3d;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-3d::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: inherit;
+            border-radius: inherit;
+            transform: translateZ(-5px);
+            filter: blur(5px);
+            opacity: 0.5;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-3d:hover {
+            transform: translateY(-5px) translateZ(5px);
+        }
+
+        .btn-3d:hover::before {
+            transform: translateZ(-8px);
+            opacity: 0.8;
+        }
+
+        .btn-3d:active {
+            transform: translateY(0) translateZ(0);
+        }
+
+        .btn-3d:active::before {
+            transform: translateZ(-2px);
+            opacity: 0.3;
+        }
+
+        /* Light refraction effects */
+        .light-refraction {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                transparent 70%);
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .planner-section:hover .light-refraction {
+            opacity: 0.3;
+        }
+
+        /* Depth layers */
+        .depth-layer-1 {
+            transform: translateZ(10px);
+        }
+
+        .depth-layer-2 {
+            transform: translateZ(20px);
+        }
+
+        .depth-layer-3 {
+            transform: translateZ(30px);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Ad Container (required for Google Ads playback) -->
+    <div id="ad-slot" style="display:none;"></div>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(() => console.log('Service Worker registered'))
+                .catch(err => console.error('Service Worker registration failed:', err));
+        }
+    </script>
+
+    <div class="container">
+        <header>
+            <h1 class="app-title">Daily Planner</h1>
+            <div class="date-display" id="currentDate"></div>
+            <a href="C:\Users\Shambavi M\Desktop\ProductivitySuite\public\index.html" class="exit-btn" id="exitBtn">
+                <i class="fas fa-home"></i>
+            </a>
+        </header>
+       
+        <div class="planner-grid">
+            <!-- Priorities Section -->
+            <div class="planner-section">
+                <div class="holographic-effect"></div>
+                <div class="light-refraction"></div>
+                <h2 class="section-title"><i class="fas fa-star"></i> Priorities</h2>
+                <div class="items-container" id="prioritiesContainer">
+                    <!-- Priorities items will be added here dynamically -->
+                </div>
+                <div class="add-form">
+                    <input type="text" class="add-input" id="priorityInput" placeholder="Add a priority...">
+                    <button class="add-btn btn-3d" id="addPriorityBtn">Add</button>
+                </div>
+            </div>
+           
+            <!-- Checklist Section -->
+            <div class="planner-section">
+                <div class="holographic-effect"></div>
+                <div class="light-refraction"></div>
+                <h2 class="section-title"><i class="fas fa-check-circle"></i> Checklist</h2>
+                <div class="items-container" id="checklistContainer">
+                    <!-- Checklist items will be added here dynamically -->
+                </div>
+                <div class="add-form">
+                    <input type="text" class="add-input" id="checklistInput" placeholder="Add a task...">
+                    <button class="add-btn btn-3d" id="addChecklistBtn">Add</button>
+                </div>
+            </div>
+           
+            <!-- Shopping List Section -->
+            <div class="planner-section">
+                <div class="holographic-effect"></div>
+                <div class="light-refraction"></div>
+                <h2 class="section-title"><i class="fas fa-shopping-cart"></i> Shopping List</h2>
+                <div class="items-container" id="shoppingContainer">
+                    <!-- Shopping items will be added here dynamically -->
+                </div>
+                <div class="add-form">
+                    <input type="text" class="add-input" id="shoppingInput" placeholder="Add an item...">
+                    <button class="add-btn btn-3d" id="addShoppingBtn">Add</button>
+                </div>
+            </div>
+           
+            <!-- For Tomorrow Section -->
+            <div class="planner-section">
+                <div class="holographic-effect"></div>
+                <div class="light-refraction"></div>
+                <h2 class="section-title"><i class="fas fa-calendar-plus"></i> For Tomorrow</h2>
+                <div class="items-container" id="tomorrowContainer">
+                    <!-- Tomorrow items will be added here dynamically -->
+                </div>
+                <div class="add-form">
+                    <input type="text" class="add-input" id="tomorrowInput" placeholder="Add a task for tomorrow...">
+                    <button class="add-btn btn-3d" id="addTomorrowBtn">Add</button>
+                </div>
+            </div>
+           
+            <!-- Notes Section -->
+            <div class="planner-section">
+                <div class="holographic-effect"></div>
+                <div class="light-refraction"></div>
+                <h2 class="section-title"><i class="fas fa-sticky-note"></i> Notes</h2>
+                <div class="items-container" id="notesContainer">
+                    <!-- Notes will be added here dynamically -->
+                </div>
+                <div class="add-form">
+                    <input type="text" class="add-input" id="noteInput" placeholder="Add a note...">
+                    <button class="add-btn btn-3d" id="addNoteBtn">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Original JavaScript remains unchanged -->
+    <script>
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+
+        // Initialize IndexedDB for better storage
+        const DB_NAME = 'DailyPlannerDB';
+        const DB_VERSION = 1;
+        let db;
+
+        function openDatabase() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                
+                request.onerror = (event) => {
+                    console.error("IndexedDB error:", event.target.error);
+                    reject(event.target.error);
+                };
+                
+                request.onsuccess = (event) => {
+                    db = event.target.result;
+                    resolve(db);
+                };
+                
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    
+                    // Create object store for each section
+                    const sections = ['priorities', 'checklist', 'shopping', 'tomorrow', 'notes'];
+                    
+                    sections.forEach(section => {
+                        if (!db.objectStoreNames.contains(section)) {
+                            const store = db.createObjectStore(section, { keyPath: 'id', autoIncrement: true });
+                            store.createIndex('userId', 'userId', { unique: false });
+                        }
+                    });
+                };
+            });
+        }
+
+        // Initialize date display
+        function updateDate() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        // Data structure for the daily planner with user-specific storage
+        async function getUserData() {
+            const userId = localStorage.getItem('currentUserId') || 'defaultUser';
+            const plannerData = {
+                priorities: [],
+                checklist: [],
+                shopping: [],
+                tomorrow: [],
+                notes: []
+            };
+
+            try {
+                if (!db) await openDatabase();
+                
+                const sections = ['priorities', 'checklist', 'shopping', 'tomorrow', 'notes'];
+                
+                for (const section of sections) {
+                    const store = db.transaction(section, 'readonly').objectStore(section);
+                    const index = store.index('userId');
+                    const request = index.getAll(userId);
+                    
+                    const results = await new Promise((resolve, reject) => {
+                        request.onsuccess = () => resolve(request.result);
+                        request.onerror = (event) => reject(event.target.error);
+                    });
+                    
+                    plannerData[section] = results.map(item => {
+                        // Remove internal fields before returning
+                        const { id, userId, ...rest } = item;
+                        return rest;
+                    });
+                }
+            } catch (e) {
+                console.error("Error loading from IndexedDB:", e);
+                // Fallback to localStorage if IndexedDB fails
+                const savedData = localStorage.getItem(`dailyPlannerData_${userId}`);
+                if (savedData) {
+                    try {
+                        const parsedData = JSON.parse(savedData);
+                        Object.assign(plannerData, parsedData);
+                    } catch (e) {
+                        console.error("Error parsing saved data:", e);
+                    }
+                }
+            }
+
+            return plannerData;
+        }
+
+        // Save data to IndexedDB with user-specific key
+        async function saveData(plannerData) {
+            const userId = localStorage.getItem('currentUserId') || 'defaultUser';
+            
+            try {
+                if (!db) await openDatabase();
+                
+                const sections = ['priorities', 'checklist', 'shopping', 'tomorrow', 'notes'];
+                
+                for (const section of sections) {
+                    const store = db.transaction(section, 'readwrite').objectStore(section);
+                    
+                    // Clear existing data for this user
+                    const clearRequest = store.index('userId').openCursor(userId);
+                    await new Promise((resolve, reject) => {
+                        clearRequest.onsuccess = (event) => {
+                            const cursor = event.target.result;
+                            if (cursor) {
+                                cursor.delete();
+                                cursor.continue();
+                            } else {
+                                resolve();
+                            }
+                        };
+                        clearRequest.onerror = (event) => reject(event.target.error);
+                    });
+                    
+                    // Add new data
+                    for (const item of plannerData[section]) {
+                        store.add({ ...item, userId });
+                    }
+                }
+            } catch (e) {
+                console.error("Error saving to IndexedDB:", e);
+                // Fallback to localStorage
+                localStorage.setItem(`dailyPlannerData_${userId}`, JSON.stringify(plannerData));
+            }
+        }
+
+        // DOM Elements
+        const containers = {
+            priorities: document.getElementById('prioritiesContainer'),
+            checklist: document.getElementById('checklistContainer'),
+            shopping: document.getElementById('shoppingContainer'),
+            tomorrow: document.getElementById('tomorrowContainer'),
+            notes: document.getElementById('notesContainer')
+        };
+
+        const inputs = {
+            priorities: document.getElementById('priorityInput'),
+            checklist: document.getElementById('checklistInput'),
+            shopping: document.getElementById('shoppingInput'),
+            tomorrow: document.getElementById('tomorrowInput'),
+            notes: document.getElementById('noteInput')
+        };
+
+        const addBtns = {
+            priorities: document.getElementById('addPriorityBtn'),
+            checklist: document.getElementById('addChecklistBtn'),
+            shopping: document.getElementById('addShoppingBtn'),
+            tomorrow: document.getElementById('addTomorrowBtn'),
+            notes: document.getElementById('addNoteBtn')
+        };
+
+        // Initialize planner
+        async function initPlanner() {
+            updateDate();
+            await renderAllSections();
+            setupEventListeners();
+            
+            // Create floating particles
+            createParticles();
+            
+            // Error handling for storage
+            try {
+                localStorage.getItem('test');
+            } catch (e) {
+                console.error("LocalStorage error:", e);
+                showToast("LocalStorage is not available. Some features may not work.", 'error');
+            }
+        }
+
+        // Create floating particles for cinematic effect
+        function createParticles() {
+            const particleCount = Math.min(30, Math.floor(window.innerWidth / 30));
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random size between 1 and 3px
+                const size = Math.random() * 2 + 1;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Random position
+                particle.style.left = `${Math.random() * 100}vw`;
+                particle.style.top = `${Math.random() * 100}vh`;
+                
+                // Random animation duration
+                const duration = Math.random() * 30 + 20;
+                particle.style.animationDuration = `${duration}s`;
+                
+                // Random delay
+                particle.style.animationDelay = `${Math.random() * 20}s`;
+                
+                // Random opacity
+                particle.style.opacity = Math.random() * 0.5 + 0.1;
+                
+                document.body.appendChild(particle);
+            }
+        }
+
+        // Render all sections
+        async function renderAllSections() {
+            const plannerData = await getUserData();
+            for (const section in containers) {
+                await renderSection(section, plannerData);
+            }
+        }
+
+        // Render a specific section
+        async function renderSection(section, plannerData) {
+            const container = containers[section];
+            container.innerHTML = '';
+            
+            if (plannerData[section].length === 0) {
+                container.innerHTML = `<div class="empty-state">No items yet. Add your first item!</div>`;
+                return;
+            }
+            
+            plannerData[section].forEach((item, index) => {
+                const itemEl = document.createElement('div');
+                itemEl.className = 'item';
+                
+                // Add priority classes for priorities section
+                if (section === 'priorities') {
+                    if (item.priority === 'high') itemEl.classList.add('priority-high');
+                    else if (item.priority === 'medium') itemEl.classList.add('priority-medium');
+                    else if (item.priority === 'low') itemEl.classList.add('priority-low');
+                }
+                
+                let contentHTML = '';
+                
+                if (section === 'checklist') {
+                    contentHTML = `
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" id="check-${index}"
+                                ${item.completed ? 'checked' : ''}>
+                            <div class="item-content">${escapeHtml(item.text)}</div>
+                        </div>
+                    `;
+                } else {
+                    contentHTML = `
+                        <div class="item-content" data-section="${section}" data-index="${index}" contenteditable="true">
+                            ${escapeHtml(item.text)}
+                        </div>
+                    `;
+                }
+                
+                itemEl.innerHTML = `
+                    ${contentHTML}
+                    <div class="item-actions">
+                        <button class="action-btn delete-btn" data-section="${section}" data-index="${index}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(itemEl);
+                
+                // Add event listeners for checklist items
+                if (section === 'checklist') {
+                    const checkbox = itemEl.querySelector('.checklist-checkbox');
+                    checkbox.addEventListener('change', async () => {
+                        const plannerData = await getUserData();
+                        plannerData[section][index].completed = checkbox.checked;
+                        await saveData(plannerData);
+                        
+                        if (checkbox.checked) {
+                            itemEl.style.opacity = '0.7';
+                            itemEl.querySelector('.item-content').style.textDecoration = 'line-through';
+                        } else {
+                            itemEl.style.opacity = '1';
+                            itemEl.querySelector('.item-content').style.textDecoration = 'none';
+                        }
+                    });
+                    
+                    // Set initial state
+                    if (item.completed) {
+                        itemEl.style.opacity = '0.7';
+                        itemEl.querySelector('.item-content').style.textDecoration = 'line-through';
+                    }
+                } else {
+                    // Add event listener for inline editing
+                    const contentEditable = itemEl.querySelector('.item-content[contenteditable="true"]');
+                    if (contentEditable) {
+                        contentEditable.addEventListener('blur', async (e) => {
+                            const section = e.target.dataset.section;
+                            const index = parseInt(e.target.dataset.index);
+                            const newText = e.target.textContent.trim();
+                            
+                            if (newText) {
+                                const plannerData = await getUserData();
+                                plannerData[section][index].text = newText;
+                                await saveData(plannerData);
+                            } else {
+                                // If empty after edit, restore original text
+                                const plannerData = await getUserData();
+                                e.target.textContent = plannerData[section][index].text;
+                            }
+                        });
+                        
+                        // Handle Enter key to blur the element
+                        contentEditable.addEventListener('keydown', (e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                e.target.blur();
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        // Add a new item
+        async function addItem(section) {
+            const input = inputs[section];
+            const text = input.value.trim();
+            
+            if (!text) return;
+            
+            const plannerData = await getUserData();
+            
+            if (section === 'priorities') {
+                // For priorities, assign a random priority level
+                const priorities = ['high', 'medium', 'low'];
+                const priority = priorities[Math.floor(Math.random() * priorities.length)];
+                plannerData[section].push({ text, priority });
+            } else if (section === 'checklist') {
+                plannerData[section].push({ text, completed: false });
+            } else {
+                plannerData[section].push({ text });
+            }
+            
+            input.value = '';
+            await saveData(plannerData);
+            await renderSection(section, plannerData);
+            
+            // Show success feedback
+            showToast(`Item added to ${section.replace(/([A-Z])/g, ' $1').toLowerCase()}`, 'success');
+        }
+
+        // Delete an item
+        async function deleteItem(section, index) {
+            const plannerData = await getUserData();
+            plannerData[section].splice(index, 1);
+            await saveData(plannerData);
+            await renderSection(section, plannerData);
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Add buttons
+            Object.keys(addBtns).forEach(section => {
+                addBtns[section].addEventListener('click', () => addItem(section));
+                
+                // Also allow Enter key in inputs
+                inputs[section].addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') addItem(section);
+                });
+            });
+            
+            // Event delegation for delete buttons
+            Object.values(containers).forEach(container => {
+                container.addEventListener('click', (e) => {
+                    const deleteBtn = e.target.closest('.delete-btn');
+                    
+                    if (deleteBtn) {
+                        const section = deleteBtn.dataset.section;
+                        const index = parseInt(deleteBtn.dataset.index);
+                        deleteItem(section, index);
+                    }
+                });
+            });
+        }
+
+        // Helper function to escape HTML
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Toast notification
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        // Initialize the planner
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await initPlanner();
+                
+                // Track performance metrics
+                if ('performance' in window) {
+                    const perfEntries = performance.getEntriesByType("navigation");
+                    if (perfEntries.length > 0) {
+                        console.log("Page load time:", perfEntries[0].loadEventEnd - perfEntries[0].startTime, "ms");
+                    }
+                }
+            } catch (e) {
+                console.error("Error initializing planner:", e);
+                showToast("An error occurred while initializing the planner. Please try refreshing the page.", 'error');
+            }
+        });
+
+        // Offline detection
+        window.addEventListener('online', () => {
+            showToast("You're back online", 'success');
+        });
+
+        window.addEventListener('offline', () => {
+            showToast("You're offline - changes will sync when you reconnect", 'warning');
+        });
+    </script>
+</body>
+</html>
